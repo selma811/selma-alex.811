@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Baby</title>
+    <style>
+        /* Body Styling */
+        body {
+            font-family: 'Pacifico', cursive;
+            background: repeating-linear-gradient(to right, #f8c7d8 0%, #f8c7d8 5%, white 5%, white 10%);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 250vh;
+            position: relative;
+        }
+
+        /* Title and Subheading Styling */
+        h1 {
+            color: #C4A484;
+            text-align: center;
+            font-size: 3em;
+            margin-top: 15%;
+        }
+
+        h2, h3 {
+            color: #C4A484;
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        /* Confetti piece styles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 182, 193, 0.7);
+            opacity: 0;
+            animation: fall 3s linear infinite, scatter 2s ease-out infinite;
+            border-radius: 50%;
+        }
+
+        /* Confetti falling animation */
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Scatter animation for random movement */
+        @keyframes scatter {
+            0% {
+                left: 50%;
+                transform: scale(0);
+            }
+            100% {
+                left: calc(50% + (Math.random() * 200 - 100)px);
+                top: calc(50% + (Math.random() * 300 - 150)px);
+                transform: scale(1);
+            }
+        }
+
+        /* Pop-up styles */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .popup-content {
+            background-color: #f8c7d8;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .popup-content p {
+            margin: 0;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Playlist Card (Embedded Player) */
+        .playlist-card {
+            margin: 20px auto;
+            padding: 10px;
+            border: 5px solid #C4A484;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            cursor: pointer;
+        }
+
+        /* Second Pop-up */
+        .second-popup {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            font-size: 1.2em;
+            z-index: 1000;
+        }
+
+        .second-popup p {
+            margin: 0;
+        }
+
+        .second-popup .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Envelope and Letter Styling */
+        .envelope {
+            position: relative;
+            width: 220px;
+            height: 140px;
+            margin: 20px auto;
+            background-color: #fff;
+            border: 3px solid #C4A484;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .envelope .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #fff;
+            border-bottom: 3px solid #C4A484;
+            transform-origin: top;
+            transition: transform 0.5s ease;
+        }
+
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 30px;
+            height: 30px;
+            background-color: #C4A484;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #C4A484;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -15px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: -15px;
+        }
+
+        .letter-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 90vh;
+            background-color: #fff;
+            border: 5px solid #C4A484;
+            padding: 40px 60px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            font-size: 1.4em;
+            line-height: 1.8;
+            z-index: 1000;
+            display: none;
+            border-radius: 15px;
+        }
+
+        .close-letter {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #C4A484;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .playlist-card iframe {
+                width: 100%;
+                height: 380px;
+            }
+        }
+
+/* Paragraph Frame Styling */
+.paragraph-frame {
+    margin: 40px auto;
+    padding: 20px;
+    border: 5px solid #C4A484;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 600px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.paragraph-frame p {
+    font-size: 1.2em;
+    color: #C4A484;
+}
+
+    </style>
+</head>
+<body>
+
+    <h1>For My Baby</h1>
+    <h2>Happy Birthday Alex</h2>
+    <h3>I love you</h3>
+
+    <!-- Pop-up Content -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <div class="close" onclick="closePopup()">×</div>
+            <p><strong>Happy Birthday!!</strong></p>
+            <p>Before you discover everything, I prepared some music for you.</p>
+            <p>Every song reminds me of you and it has been that way ever since i met you.Just like the man you share this very special day with, I too have a dream and it is to share the rest of my life with you and if I have to get witchcraft involved for it to happen then I will do it idgaf, let this be proof that i mean it, i love you. </p>
+            <p><strong>Built and coded with love by your future wife</strong></p>
+        </div>
+    </div>
+
+    <!-- Playlist Card -->
+    <div class="playlist-card" onclick="openSpotify()">
+        <iframe src="https://open.spotify.com/embed/playlist/6QxnSyB5H3BDero76Vhw5Y?utm_source=generator" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media" style="pointer-events: none;"></iframe>
+    </div>
+
+    <!-- Second Pop-up -->
+    <div id="second-popup" class="second-popup">
+        <div class="close" onclick="closeSecondPopup()">×</div>
+        <p>Ok now that you have your music ready you can keep going and start reading the letters i prepared for you since i cant send you real ones, each letter has a specific memory related to you 💗
+                              (if you do have a brain you will understand that you need to click on the envelopes to get your message so do that) </p>
+    </div>
+
+    <!-- Envelopes Section -->
+    <div class="envelope" id="envelope1">
+        <div class="flap" id="flap1"></div>
+        <div class="heart"></div>
+    </div>
+    <div class="envelope" id="envelope2">
+        <div class="flap" id="flap2"></div>
+        <div class="heart"></div>
+    </div>
+    <div class="envelope" id="envelope3">
+        <div class="flap" id="flap3"></div>
+        <div class="heart"></div>
+    </div>
+    <div class="envelope" id="envelope4">
+        <div class="flap" id="flap4"></div>
+        <div class="heart"></div>
+    </div>
+
+
+<!-- Big Frame for Paragraph -->
+<div class="paragraph-frame">
+    <p id="customParagraph">I wish I could add the many more things I wanted to add but sadly i don’t have the skills to do that yet so I did what I could for my first time, next time I make you something it will be even better and maybe you could even teach me it would make me so so happy, I just want to say that I’m so grateful to have known you for so long already and to have seen you improve this much overtime when i met you I never thought I would care about you this much and I didn’t even think we would have known eachother for so long but just know that I’m so happy things are the way they are right now. 
+I know that during this year it wasn’t always easy for you and you went through so many hard things that you probably didn’t even tell me about but I’m so so happy i got to see you get through all of those things even if most of the time you did it on your own. 
+With all the things you’ve told me about yourself and your life and everything you went through it shows that you had so many reasons to give up but you’re still here and I’m so grateful for that and I’m not saying this because I pity you I actually think that you’re very strong and I’m very proud of you for making it this far regardless of all the things that happened to you because really not everyone would do that and not everyone would be doing as good as you are right now. You never give up no matter what and I admire that about you, you always find a way. 
+Just know that in the good and in the bad I always loved you and I never stopped loving you not even once even if sometimes you thought you didn’t deserve it I truly never stopped loving you, I really did love you through everything and I hope I get to keep doing that, I’ve never been this proud of someone as much as I am proud of you and I hope you’re just as proud of yourself. 
+I hope this year brings you a lot of good things and that you become an even more better person and I hope I get to be by your side so I can witness it. 
+
+Happy birthday my Alexander James I love you 
+</p>
+</div>
+
+
+    <!-- Letters -->
+    <div class="letter-popup" id="letterPopup1">
+        <div class="close-letter" onclick="closeLetter(1)">×</div>
+        <p>I still remember the day I met you vividly, I had just gotten back back from Algeria 3 days before we met and everything was so boring I was honestly just waiting for school to start again until you appeared, I even remember where I was sitting, I was sitting by the kitchen table, it was 2am for me and I asked you what time it was for you and since that day whenever i check what time it is for me I always make sure to check what time it is for you. (even if by now i already know without having to check) 
+You became such a big part of my life that I can barely remember how it used to be without you, somehow even if you’re not here next to me whenever I walk by a place I showed you it reminds me of you and how happy I was to show you it, every single thing around me somehow has a your mark on it, I remember the times i would sit on the ground drawing us while my brothers were playing soccer and how we would keep talking endlessly, i loved everything about those moments and I still do to this day, they’re something I’ll cherish forever </p>
+    </div>
+    <div class="letter-popup" id="letterPopup2">
+        <div class="close-letter" onclick="closeLetter(2)">×</div>
+        <p>Before we even met i  asked God to send me a sign that I would meet my soulmate soon, the second I stepped off the plane and left the airport, a white butterfly appeared. I didn’t think much of it at first, but then they kept appearing, as if they were leading me somewhere and then I met you. After that day, the butterflies stopped showing up until the times when we weren’t in each other’s lives, I would start seeing them again right before we found our way back to one another and im ngl most of the time you had me going out trying to find one to reassure myself that we would speak again you evil ass american 💔 But anyway it felt like God was reminding me that no matter the time or distance, we’re always connected, i even asked Him to make me stop feeling anything towards you if it was useless but nothing changed and im convinced that there is a reason for that.
+I never told you all of this before, but I’m saying it now because it’s something so precious to me. To me, white butterflies are proof that you were always meant to be a part of my life</p>
+    </div>
+    <div class="letter-popup" id="letterPopup3">
+        <div class="close-letter" onclick="closeLetter(3)">×</div>
+        <p>Summer became my favorite season the day I met you, I always hated it because I never liked swimming or going to the beach, I hated everything about it, I hated how suddenly the city was fuller and a lot more active, so many tourists would come and it just wouldn’t be the same compared to the other seasons where it would be a lot more calm. 
+But ever since I met you I haven’t been able to love another season and before I even realized it, summer became my favorite.
+Suddenly, the thought of going to the beach didn’t seem so bad whenever I imagined being there with you. The crowded streets no longer annoyed me because I wanted to walk beside you, showing you everything made me so happy, wether it was the beautiful views or the history, I loved showing you everything and it made me the happiest and if this made me this happy I can’t imagine how happy I would be if I was able to have you by my side </p>
+    </div>
+    <div class="letter-popup" id="letterPopup4">
+        <div class="close-letter" onclick="closeLetter(4)">×</div>
+        <p>Before I met you, I never thought I would be learning a whole new language with a different alphabet. I never imagined myself in the kitchen, trying to recreate dishes I had never even heard of or spending nights awake teaching myself how to code a website, just to surprise someone. But every single thing I do is worth it, because i do it for you.
+I still remember the first word I learned in your language Я тебя люблю even though I’ve forgotten so many other words, this is the one I’ll never forget it made me feel closer to you in a way I can’t even explain.
+I could have never imagined myself staying up all night in the kitchen to bake a cake just to celebrate a year with someone so far away. But I still remember how I felt that day it was like my heart was lighter i was so so happy and i couldnt wait to see your reaction,i was filled with so much energy, whether i was whisking the batter or running to buy ingredients, and I couldn’t stop smiling. I put so much love into every single step. While i mixed the ingredients, I couldn’t stop dreaming of the day we’d bake together, laughing and creating memories. I kept thinking about that and even though you weren’t physically here,just thinking about it made me the happiest girl in the world at the time, it felt like you were right beside me. </p>
+    </div>
+
+    <script>
+        // Close and open popups
+        function closePopup() { document.getElementById('popup').style.display = 'none'; }
+        function closeSecondPopup() { document.getElementById('second-popup').style.display = 'none'; }
+        function openSpotify() { sessionStorage.setItem('visitedSpotify', 'true'); window.location = 'https://open.spotify.com/playlist/6QxnSyB5H3BDero76Vhw5Y?utm_source=generator'; }
+        document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible' && sessionStorage.getItem('visitedSpotify') === 'true') { document.getElementById('second-popup').style.display = 'block'; } });
+
+        // Envelopes functionality
+        function openLetter(id) { document.getElementById(`flap${id}`).style.transform = 'rotateX(-180deg)'; document.getElementById(`letterPopup${id}`).style.display = 'block'; }
+        function closeLetter(id) { document.getElementById(`letterPopup${id}`).style.display = 'none'; document.getElementById(`flap${id}`).style.transform = 'rotateX(0deg)'; }
+
+        document.getElementById('envelope1').onclick = () => openLetter(1);
+        document.getElementById('envelope2').onclick = () => openLetter(2);
+        document.getElementById('envelope3').onclick = () => openLetter(3);
+        document.getElementById('envelope4').onclick = () => openLetter(4);
+
+        // Confetti effect
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            document.body.appendChild(confetti);
+            const size = Math.random() * 10 + 5;
+            confetti.style.width = `${size}px`;
+            confetti.style.height = `${size}px`;
+
+            const colors = [
+                'rgba(255, 182, 193, 0.7)',
+                'rgba(195, 167, 141, 0.7)',
+                'rgba(255, 255, 255, 0.7)',
+            ];
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            confetti.style.left = `${Math.random() * 100}vw`; 
+            confetti.style.top = '-10%'; 
+
+            confetti.classList.add('confetti');
+
+            confetti.addEventListener('animationend', () => {
+                confetti.remove();
+            });
+        }
+
+        window.onload = function() {
+            setInterval(createConfetti, 200);
+        };
+    </script>
+</body>
+</html>
